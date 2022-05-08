@@ -14,9 +14,7 @@ const checkForIdle = (guild) => {
     setTimeout( () => {
         if (guild?.player._state.status === 'idle') {
             guild?.player.stop()
-            guild.player = null
-            guild.connection.destroy()
-            guild.connection = null
+            guild?.connection.destroy()
             guild = null
         }
     }, 60000)
@@ -68,6 +66,7 @@ const play = async (guild, song) => {
             play(guild, getNextMusic(guild))
             checkForIdle(guild)
         })
+        guild.player.on()
     }
 
     if (!guild.connection) {
@@ -99,8 +98,13 @@ const skip = (message) => {
     const { guildId } = message
     const guild = guilds[guildId]
     if (!guild) return
+    if (guild.queue.length === 0) {
+        guild.player.stop()
+        guild.player = null
+    } else {
+        play(guild, getNextMusic(guild))
+    }
 
-    play(guild, getNextMusic(guild))
     return message.reply('Skip')
 }
 
@@ -132,9 +136,9 @@ const reset = async (message) => {
     const guild = guilds[guildId]
     if(!guild) return
 
-    guild?.player.stop()
+    guild.player.stop()
     guild.player = null
-    guild?.connection.destroy()
+    guild.connection.destroy()
     guild.connection = null
     guild = null
 
