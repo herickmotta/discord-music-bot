@@ -1,6 +1,6 @@
 require('dotenv').config()
 const { Client, Intents } = require('discord.js')
-const { skip, addToQueue, queue, clear, reset } = require('./player')
+const { skip, addToQueue, queue, clear, reset, shuffle } = require('./player')
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_MESSAGES ] })
 
@@ -23,6 +23,9 @@ client.on('messageCreate', async (message) => {
 	}
 	if (message.content.includes('!reset')) {
 		await clear(message)
+	}
+	if (message.content.includes('!shuffle')) {
+		await shuffle(message)
 	}
 })
 

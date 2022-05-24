@@ -7,6 +7,7 @@ const {
     AudioPlayerStatus,
     VoiceConnectionStatus
 } = require('@discordjs/voice')
+const { shuffle } = require('./utils/shuffle');
 
 const guilds = {}
 
@@ -139,6 +140,15 @@ const reset = async (message) => {
     guild = null
 
     return message.reply('Reset')
+}
+
+const shuffle = async (message) => {
+    const { guildId } = message
+    const guild = guilds[guildId];
+
+    guild.queue = await shuffle(guild.queue);
+    
+    return message.reply('Queue shuffled')
 }
 
 module.exports = {
