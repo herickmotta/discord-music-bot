@@ -7,6 +7,7 @@ const {
     AudioPlayerStatus,
     VoiceConnectionStatus
 } = require('@discordjs/voice')
+const { sort } = require('./utils/sort')
 
 const guilds = {}
 
@@ -66,7 +67,6 @@ const play = async (guild, song) => {
             play(guild, getNextMusic(guild))
             checkForIdle(guild)
         })
-        guild.player.on()
     }
 
     if (!guild.connection) {
@@ -145,11 +145,21 @@ const reset = async (message) => {
     return message.reply('Reset')
 }
 
+const shuffle = async (message) => {
+    const { guildId } = message
+    const guild = guilds[guildId]
+
+    guild.queue = await sort(guild.queue)
+
+    return message.reply('Queue shuffled')
+}
+
 module.exports = {
     play,
     addToQueue,
     skip,
     queue,
     clear,
-    reset
+    reset,
+    shuffle
 }
